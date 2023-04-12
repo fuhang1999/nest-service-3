@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-12 00:23:41
- * @LastEditTime: 2023-04-12 17:38:30
+ * @LastEditTime: 2023-04-13 01:13:35
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\main.ts
  */
@@ -13,6 +13,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -20,6 +21,9 @@ async function bootstrap() {
     new FastifyAdapter(),
     { bufferLogs: true },
   );
+
+  // 管道
+  app.useGlobalPipes(new ValidationPipe());
 
   // 设置swagger文档相关配置
   const config = new DocumentBuilder()

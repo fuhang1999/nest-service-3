@@ -1,4 +1,12 @@
 /*
+ * @Description:
+ * @Author: FuHang
+ * @Date: 2023-04-11 22:38:07
+ * @LastEditTime: 2023-04-13 02:20:33
+ * @LastEditors:
+ * @FilePath: \nest-service\commitlint.config.js
+ */
+/*
  * @Description: commit-msg提交信息格式规范
  *
  * commit-msg格式: <type>(scope?): <subject>
@@ -33,7 +41,7 @@ module.exports = {
         'test',
         'chore',
         'revert',
-        'build',
+        'wip',
       ],
     ],
     'type-empty': [2, 'never'], // <type> 不能为空
