@@ -10,9 +10,10 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/user/user.module';
 import { RoleModule } from './modules/role/role.module';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, RoleModule],
+  imports: [PrismaModule, UserModule, RoleModule, MenuModule],
   controllers: [],
   providers: [],
 })
