@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-11 22:03:07
- * @LastEditTime: 2023-04-12 01:38:22
+ * @LastEditTime: 2023-04-12 17:55:22
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\.cz-config.js
  */
@@ -26,6 +26,7 @@ module.exports = {
       name: '🔧 chore:      对构建过程或辅助工具和库的更改(不影响源文件、测试用例)',
     },
     { value: 'revert', name: '⏪ revert:     回滚 commit' },
+    { value: 'wip', name: '🤹 wip:       开发中' },
   ],
   // scope 类型（定义之后，可通过上下键选择）
   scopes: [
