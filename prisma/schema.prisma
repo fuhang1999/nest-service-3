@@ -12,23 +12,23 @@ datasource db {
 
 // 用户
 model User {
-  id           String     @id @default(uuid())
-  username     String     @unique
+  id           String      @id @default(uuid())
+  username     String      @unique
   password     String
-  realname     String?
+  realName     String?     @map("real_name")
   nickname     String?
-  phone        String?    @unique
-  email        String?    @unique
-  status       Int        @default(1) // 0 锁定 1 正常
+  phone        String?     @unique
+  email        String?     @unique
+  status       Int         @default(1) // 0 锁定 1 正常
   avatar       String?
-  role         Role       @relation(fields: [roleId], references: [id])
-  roleId       String
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId Int
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  role         Role?       @relation(fields: [roleId], references: [id])
+  roleId       String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
 
-  @@map("user")
+  @@map("users")
 }
 
 // 角色
@@ -44,7 +44,7 @@ model Role {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  @@map("role")
+  @@map("roles")
 }
 
 // 菜单
@@ -64,7 +64,7 @@ model Menu {
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
 
-  @@map("menu")
+  @@map("menus")
 }
 
 // 角色菜单
@@ -80,7 +80,7 @@ model RoleMenu {
 
   @@id([roleId, menuId])
   @@unique([roleId, menuId])
-  @@map("role_menu")
+  @@map("role_menus")
 }
 
 // 部门
@@ -94,5 +94,22 @@ model Department {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@map("department")
+  @@map("departments")
+}
+
+// 日志
+model Log {
+  id           Int      @id @default(autoincrement())
+  title        String?
+  ip           String?
+  url          String
+  userAgent    String?  @map("user_agent")
+  responseData String?  @map("response_data")
+  host         String?
+  type         Int?
+  method       String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("logs")
 }
