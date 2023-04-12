@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique
+  password     String
+  realname     String?
+  nickname     String?
+  phone        String?    @unique
+  email        String?    @unique
+  status       Int        @default(1) // 0 锁定 1 正常
+  avatar       String?
+  role         Role       @relation(fields: [roleId], references: [id])
+  roleId       String
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+// 角色
+model Role {
+  id          String     @id @default(uuid())
+  roleName    String     @unique @map("role_name")
+  encoded     String     @unique
+  description String?
+  status      Int        @default(1) // 0 锁定 1 正常
+  sort        Int        @default(1) // 排序字段
+  menus       RoleMenu[]
+  User        User[]
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@map("role")
+}
+
+// 菜单
+model Menu {
+  id        Int        @id @default(autoincrement())
+  title     String
+  name      String
+  type      Int        @default(1) // 1 菜单  2 按钮
+  icon      String?
+  path      String
+  component String
+  hidden    Boolean    @default(false) // 是否隐藏
+  status    Int        @default(1) // 0 锁定 1 正常
+  sort      Int?       @default(1) // 排序字段
+  parentId  Int?       @map("parent_id")
+  roles     RoleMenu[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("menu")
+}
+
+// 角色菜单
+model RoleMenu {
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String @map("role_id")
+
+  menu   Menu @relation(fields: [menuId], references: [id])
+  menuId Int  @map("menu_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([roleId, menuId])
+  @@unique([roleId, menuId])
+  @@map("role_menu")
+}
+
+// 部门
+model Department {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  parentId    Int?     @map("parent_id")
+  status      Int      @default(1) // 0 锁定 1 正常
+  User        User[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("department")
+}
