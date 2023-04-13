@@ -2,8 +2,8 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-03-31 01:56:44
- * @LastEditors:
+ * @LastEditTime: 2023-04-13 17:58:53
+ * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\guards\jwt-auth.guard.ts
  */
 import {
@@ -35,6 +35,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // token对比
     const request = context.switchToHttp().getRequest();
     const authorization = request['headers'].authorization || void 0;
+    console.log('authorization', authorization);
+
     let tokenNotTimeOut = true;
     if (authorization) {
       const token = authorization.split(' ')[1]; // authorization: Bearer xxx
