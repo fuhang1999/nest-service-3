@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-04 01:02:15
- * @LastEditTime: 2023-04-04 01:09:59
+ * @LastEditTime: 2023-04-13 18:57:50
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\config\winston.config.ts
  */
@@ -16,21 +16,24 @@ import 'winston-daily-rotate-file';
 export const WinstonConfig = {
   format: winston.format.combine(
     winston.format.colorize({
-      colors: {
-        info: 'blue',
-        warn: 'yellow',
-        debug: 'blue',
-      },
+      all: true,
     }),
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.json(),
+    winston.format.ms(),
+    winston.format.timestamp({ format: 'YYYY/MM/DD HH:mm:ss' }),
     winston.format.printf((info) => {
       if (info.stack) {
         info.message = info.stack;
       }
-      return `${info.timestamp} [${info.pid}] ${info.level}: [${
-        info.context || 'Application'
-      }] ${info.message}`;
+
+      return `[Nest] ${info.pid}  - ${info.timestamp}     LOG [${
+        info.context || 'NestApplication'
+      }] ${info.level} {${info.url}, ${info.method}} ${info.message}`;
     }),
+    // nestWinstonModuleUtilities.format.nestLike('CustomLogger', {
+    //   colors: true,
+    //   prettyPrint: true,
+    // }),
   ),
   defaultMeta: { pid: process.pid },
   transports: [
