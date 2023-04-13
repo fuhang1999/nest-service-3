@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-12 20:07:17
- * @LastEditTime: 2023-04-13 00:52:21
+ * @LastEditTime: 2023-04-13 18:43:11
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\user\user.controller.ts
  */
@@ -14,12 +14,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 @ApiTags('用户管理')
@@ -40,11 +42,11 @@ export class UserController {
   // findAll() {
   //   return this.userService.findAll();
   // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
