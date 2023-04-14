@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-12 23:07:34
+ * @LastEditTime: 2023-04-14 17:01:06
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.module.ts
  */
@@ -25,6 +25,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UserService } from '../user/user.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { RedisService } from '@/common/db/redis/redis.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -33,10 +35,16 @@ import { PrismaModule } from '../prisma/prisma.module';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '12h' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, UserService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    UserService,
+    ConfigService,
+    RedisService,
+  ],
 })
 export class AuthModule {}

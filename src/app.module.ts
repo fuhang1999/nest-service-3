@@ -2,11 +2,11 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-11 21:52:01
- * @LastEditTime: 2023-04-13 01:28:04
+ * @LastEditTime: 2023-04-14 17:00:26
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\app.module.ts
  */
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/user/user.module';
 import { RoleModule } from './modules/role/role.module';
@@ -20,6 +20,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { WinstonModule } from 'nest-winston';
 import { WinstonConfig } from './common/config/winston.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { WinstonMiddleware } from './common/middleware/winston/winston.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { AuthModule } from './modules/auth/auth.module';
     RoleModule,
     MenuModule,
     DepartmentModule,
+    ConfigModule,
   ],
   controllers: [],
   providers: [
@@ -50,4 +53,9 @@ import { AuthModule } from './modules/auth/auth.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // 监听所有的请求路由，并打印日志
+    consumer.apply(WinstonMiddleware).forRoutes('*');
+  }
+}

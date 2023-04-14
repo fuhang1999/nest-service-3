@@ -2,15 +2,18 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-30 01:18:43
- * @LastEditTime: 2023-04-13 01:19:56
+ * @LastEditTime: 2023-04-14 18:54:14
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\utils\utils.ts
  */
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
-export const getReqMainInfo: (req: Request) => {
+export const getReqMainInfo: (
+  req: Request,
+  message?: string,
+) => {
   [prop: string]: any;
-} = (req) => {
+} = (req, message) => {
   const { headers, url, method, body } = req;
 
   // 获取 IP
@@ -25,8 +28,8 @@ export const getReqMainInfo: (req: Request) => {
     url,
     ip,
     userAgent: headers['user-agent'],
-    responseData: JSON.stringify(body),
-    type: 1,
+    requestData: JSON.stringify(body),
+    responseMessage: message,
     method,
     host: headers.host,
   };

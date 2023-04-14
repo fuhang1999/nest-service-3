@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2022-09-26 23:04:51
- * @LastEditTime: 2023-03-31 01:32:08
+ * @LastEditTime: 2023-04-14 19:11:56
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\filters\http-exception.filter.ts
  */
@@ -18,12 +18,14 @@ import type { Request, Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { getReqMainInfo } from '../utils/utils';
+import { LoggingService } from '@/modules/logging/logging.service';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   // 注入日志服务相关依赖
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    // @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly loggingService: LoggingService,
   ) {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -36,19 +38,32 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const message = exception.message
       ? exception.message
       : `${status >= 500 ? 'Service Error' : 'Client Error'}`;
-    const errorResponse = {
-      data: null,
-      message: status == 401 ? 'token过期，请重新登录' : message,
-      code: status == 401 ? 401 : -1,
-      success: false,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-    };
+    // const errorResponse = {
+    //   data: null,
+    //   message: status == 401 ? 'token过期，请重新登录' : message,
+    //   code: status == 401 ? 401 : -1,
+    //   success: false,
+    //   timestamp: new Date().toISOString(),
+    //   path: request.url,
+    // };
 
     // 设置返回的状态码， 请求头，发送错误信息
-    response.status(status);
-    response.header('Content-Type', 'application/json; charset=utf-8');
-    response.send(errorResponse);
+    // response.status(status);
+    // response.header('Content-Type', 'application/json; charset=utf-8');
+    // response.send(errorResponse);
+    // console.log('response-response', message);
+
+    this.loggingService.error(
+      'AnyExceptionFilter',
+      getReqMainInfo(request, message),
+    );
+
+    response.status(status).send({
+      code: status,
+      data: null,
+      success: false,
+      message: message,
+    });
 
     // const ctx = host.switchToHttp();
     // const res = ctx.getResponse<Response>();

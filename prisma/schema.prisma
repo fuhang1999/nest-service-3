@@ -99,17 +99,18 @@ model Department {
 
 // 日志
 model Log {
-  id           Int      @id @default(autoincrement())
-  title        String?
-  ip           String?
-  url          String
-  userAgent    String?  @map("user_agent")
-  responseData String?  @map("response_data")
-  host         String?
-  type         Int?
-  method       String?
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id              Int      @id @default(autoincrement())
+  title           String?
+  ip              String?
+  url             String
+  userAgent       String?  @map("user_agent")
+  requestData     String?  @map("request_data")
+  responseMessage String?   @map("response_message")
+  host            String?
+  type            Int?
+  method          String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("logs")
 }

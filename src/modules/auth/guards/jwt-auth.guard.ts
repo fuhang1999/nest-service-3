@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-04-13 17:58:53
+ * @LastEditTime: 2023-04-14 19:17:48
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\guards\jwt-auth.guard.ts
  */
@@ -25,6 +25,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('走这里没有');
+
     const isPublic = this.reflector.getAllAndOverride<boolean>('guest', [
       context.getHandler(),
       context.getClass(),
@@ -61,12 +63,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   getRequest(context: ExecutionContext) {
+    console.log('走这里没有1');
+
     const ctx = context.switchToHttp();
     const request = ctx.getRequest();
     return request;
   }
 
   handleRequest<User>(err, user: User): User {
+    console.log('走这里没有2');
+
     if (err || !user) {
       throw new UnauthorizedException('身份验证失败');
     }

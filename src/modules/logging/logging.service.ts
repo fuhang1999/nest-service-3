@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-30 09:42:27
- * @LastEditTime: 2023-04-13 01:26:11
+ * @LastEditTime: 2023-04-14 19:12:27
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\logging\logging.service.ts
  */
@@ -25,21 +25,31 @@ export class LoggingService {
     return this.prisma.log.create(data);
   }
 
-  async log(name: string, message: any): Promise<Logging> {
-    this.logger.info(name, message.req);
+  async info(name: string, message: any): Promise<Logging> {
+    this.logger.info(name, {
+      ...message,
+      level: 'INFO',
+      name,
+    });
     return this.prisma.log.create({
-      data: Object.assign(message.req, {
+      data: {
+        ...message,
         type: 1,
-      }),
+      },
     });
   }
 
   async error(name: string, message: any): Promise<Logging> {
-    this.logger.error(name, message.req);
+    this.logger.error(name, {
+      ...message,
+      level: 'ERROR',
+      name,
+    });
     return this.prisma.log.create({
-      data: Object.assign(message.req, {
+      data: {
+        ...message,
         type: 2,
-      }),
+      },
     });
   }
 
@@ -47,8 +57,18 @@ export class LoggingService {
     this.logger.warn(name, message);
   }
 
-  debug(name: string, message: any) {
-    this.logger.debug(name, message);
+  async debug(name: string, message: any): Promise<Logging> {
+    this.logger.debug(name, {
+      ...message,
+      level: 'DEBUG',
+      name,
+    });
+    return this.prisma.log.create({
+      data: {
+        ...message,
+        type: 3,
+      },
+    });
   }
 
   verbose(name: string, message: any) {

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-30 16:45:13
- * @LastEditTime: 2023-03-30 17:48:18
+ * @LastEditTime: 2023-04-14 18:48:38
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\filters\any-exception.filter.ts
  */
@@ -13,9 +13,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Logger,
 } from '@nestjs/common';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Response } from 'express';
 import { getReqMainInfo } from '../utils/utils';
 import { LoggingService } from '@/modules/logging/logging.service';
@@ -24,7 +22,7 @@ import { LoggingService } from '@/modules/logging/logging.service';
 export class AnyExceptionFilter<T> implements ExceptionFilter {
   // 注入日志服务相关依赖
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    // @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private readonly loggingService: LoggingService,
   ) {}
 
@@ -42,10 +40,7 @@ export class AnyExceptionFilter<T> implements ExceptionFilter {
     //   status,
     //   req: getReqMainInfo(request),
     // });
-    this.loggingService.error('exception', {
-      responseData: response,
-      req: getReqMainInfo(request),
-    });
+    this.loggingService.error('AnyExceptionFilter', getReqMainInfo(request));
     response.status(status).send({
       code: status,
       data: null,
