@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-04-18 01:34:25
+ * @LastEditTime: 2023-04-18 15:34:14
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\guards\jwt-auth.guard.ts
  */
@@ -59,19 +59,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         );
         const decodePrefix = redis_token?.substr(0, 10);
         const decodeToken = redis_token?.substr(10);
+        request['headers'].authorization = `Bearer ${decodeToken}`;
         const payload: any = this.jwtService.decode(decodeToken);
-
         if (!decodePrefix || !prefix || decodePrefix !== prefix || !payload) {
           throw new UnauthorizedException('您的登录信息已过期，请重新登录');
         }
-        // return payload;
       } catch (err) {
         tokenNotTimeOut = false;
         throw new UnauthorizedException(err.message || '请重新登录');
       }
     }
-    console.log('context', context);
-
     return tokenNotTimeOut && (super.canActivate(context) as boolean);
   }
 

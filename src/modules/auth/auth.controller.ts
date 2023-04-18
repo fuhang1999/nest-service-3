@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-18 08:28:25
+ * @LastEditTime: 2023-04-18 16:24:19
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.controller.ts
  */
@@ -13,28 +13,29 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   Req,
+  Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: '登录' })
-  // 1.先进行登录验证，执行local.strategy.ts文件中的calidate方法
   @UseGuards(AuthGuard('local'))
   @UseInterceptors(ClassSerializerInterceptor)
-  @Post('login')
-  async login(@Req() req) {
-    // 4.验证通过以后执行这个函数
+  @Post('token')
+  async token(@Req() req: any) {
     return this.authService.login(req.user);
   }
 
-  // @UseGuards(LocalAuthGuard)
-  // @Post('auth/login')
-  // async login(@Request() req) {
-  //   return this.authService.login(req.user);
-  // }
+  @ApiOperation({ summary: '刷新token' })
+  @UseGuards(JwtAuthGuard)
+  @Post('refreshToken')
+  async refreshToken(@Body() body: any) {
+    return this.authService.refreshToken(body);
+  }
 }

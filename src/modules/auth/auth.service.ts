@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-18 08:28:43
+ * @LastEditTime: 2023-04-18 16:32:34
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.service.ts
  */
@@ -13,6 +13,7 @@ import { jwtConstants } from './constants';
 import { RedisService } from '@/common/db/redis/redis.service';
 import { secretEncrypt } from '@/common/utils/aes-secret';
 import { getRandomString } from '@/common/utils/utils';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -38,38 +39,42 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
-    console.log('user', user);
+  // 创建token
+  createToken(user: any, type = 'token') {
+    const tokenType =
+      type === 'token'
+        ? {
+            secret: jwtConstants.secret,
+            expiresIn: '4h',
+          }
+        : { secret: jwtConstants.secret, expiresIn: '7d' };
+    console.log('tokenType', tokenType);
 
-    const payload = user;
-    // const payload = { username: user.username, id: user.id };
-    const accessToken = this.jwtService.sign(payload, {
-      secret: jwtConstants.secret,
-      expiresIn: '4h',
-    });
-    const refreshToken = this.jwtService.sign(
-      { type: 'refresh', id: payload.id },
-      { secret: jwtConstants.secret, expiresIn: '7d' },
-    );
+    return this.jwtService.sign(user, tokenType);
+  }
+
+  async login(user: any) {
+    const accessToken = this.createToken(user.id);
+    const refreshToken = this.createToken(user.id, 'refresh');
     const accessStr = getRandomString(10);
     const refreshStr = getRandomString(10);
 
-    const nanoidAccessToken = secretEncrypt(accessStr + payload.id);
+    const nanoidAccessToken = secretEncrypt(accessStr + user.id);
 
-    const nanoidRefreshToken = secretEncrypt(refreshStr + payload.id);
+    const nanoidRefreshToken = secretEncrypt(refreshStr + user.id);
     //存储token到redis
     await this.redisService.initRedis('auth.login', 0);
     await this.redisService.setRedis(
       'auth.login',
       0,
-      `access_token::${payload.id}`,
+      `access_token::${user.id}`,
       `${accessStr}${accessToken}`,
       60 * 60 * 4,
     );
     await this.redisService.setRedis(
       'auth.login',
       1,
-      `refresh_token::${payload.id}`,
+      `refresh_token::${user.id}`,
       `${refreshStr}${refreshToken}`,
       60 * 60 * 4,
     );
@@ -78,5 +83,11 @@ export class AuthService {
       refresh_token: nanoidRefreshToken,
       expires_in: 60 * 60 * 4,
     };
+  }
+
+  // 刷新token
+  async refreshToken(option: any) {
+    console.log('option', option);
+    return option;
   }
 }

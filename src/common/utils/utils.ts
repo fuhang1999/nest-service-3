@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-30 01:18:43
- * @LastEditTime: 2023-04-18 08:35:13
+ * @LastEditTime: 2023-04-18 15:19:14
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\utils\utils.ts
  */
@@ -38,7 +38,8 @@ export const getReqMainInfo: (
 };
 
 export const getRandomString = (len: number) => {
-  const randomCharacter = 'qwertyuiopasdfghjklzxcvbnm1234567890';
+  const randomCharacter =
+    'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890';
   const min = 0;
   const max = randomCharacter.length - 1;
   let _str = ''; //定义随机字符串 变量

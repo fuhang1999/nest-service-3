@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-12 20:07:17
- * @LastEditTime: 2023-04-18 08:25:30
+ * @LastEditTime: 2023-04-18 11:53:56
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\user\user.controller.ts
  */
