@@ -2,13 +2,13 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-14 10:14:53
- * @LastEditTime: 2023-04-14 18:43:44
+ * @LastEditTime: 2023-04-18 08:26:48
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\middleware\winston\winston.middleware.ts
  */
 import { getReqMainInfo } from '@/common/utils/utils';
 import { LoggingService } from '@/modules/logging/logging.service';
-import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request } from 'express';
 
 @Injectable()

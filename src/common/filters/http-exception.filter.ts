@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2022-09-26 23:04:51
- * @LastEditTime: 2023-04-14 19:11:56
+ * @LastEditTime: 2023-04-18 08:26:36
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\common\filters\http-exception.filter.ts
  */
@@ -11,12 +11,8 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  HttpStatus,
-  Inject,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
 import { getReqMainInfo } from '../utils/utils';
 import { LoggingService } from '@/modules/logging/logging.service';
 
@@ -54,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     // console.log('response-response', message);
 
     this.loggingService.error(
-      'AnyExceptionFilter',
+      'HttpExceptionFilter',
       getReqMainInfo(request, message),
     );
 

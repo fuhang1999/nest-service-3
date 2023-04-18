@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-14 17:01:06
+ * @LastEditTime: 2023-04-18 01:01:46
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.module.ts
  */
@@ -33,6 +33,7 @@ import { ConfigService } from '@nestjs/config';
     PrismaModule,
     UserModule,
     PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
     }),

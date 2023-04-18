@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-04-14 19:18:42
+ * @LastEditTime: 2023-04-18 01:22:16
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\strategies\jwt.strategy.ts
  */
@@ -22,11 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    console.log('wocao');
-    console.log(payload);
-
     if (payload.type !== 'refresh') {
-      return { id: payload.id, username: payload.username };
+      return payload;
     }
   }
 }

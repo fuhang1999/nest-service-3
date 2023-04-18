@@ -2,13 +2,11 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-12 20:07:17
- * @LastEditTime: 2023-04-13 18:53:19
+ * @LastEditTime: 2023-04-18 08:25:40
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\user\user.service.ts
  */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserEntity } from './entities/user.entity';
 

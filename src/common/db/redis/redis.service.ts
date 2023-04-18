@@ -1,4 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+/*
+ * @Description:
+ * @Author: FuHang
+ * @Date: 2023-04-14 22:50:32
+ * @LastEditTime: 2023-04-18 08:26:25
+ * @LastEditors: Please set LastEditors
+ * @FilePath: \nest-service\src\common\db\redis\redis.service.ts
+ */
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
@@ -46,7 +54,7 @@ export class RedisService {
   async getRedis(method: string, db = 0, key: string) {
     return new Promise(async (resolve, reject) => {
       const redis = await this.initRedis(method, db);
-      redis.get(`${key}`, (err, val) => {
+      redis.get(`${key}`, (err: any, val: any) => {
         if (err) {
           reject(err);
           return;

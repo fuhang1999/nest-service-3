@@ -2,10 +2,12 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-04-14 19:17:48
+ * @LastEditTime: 2023-04-18 01:34:25
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\guards\jwt-auth.guard.ts
  */
+import { RedisService } from '@/common/db/redis/redis.service';
+import { secretDecrypt } from '@/common/utils/aes-secret';
 import {
   ExecutionContext,
   Injectable,
@@ -14,20 +16,27 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { ALLOW_GUEST } from '../constants';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+  // constructor(
+  //   private reflector: Reflector,
+  //   private readonly jwtService: JwtService,
+  //   private readonly redisService: RedisService,
+  // ) {
+  //   super();
+  // }
   constructor(
     private reflector: Reflector,
+    private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
   ) {
     super();
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('走这里没有');
-
-    const isPublic = this.reflector.getAllAndOverride<boolean>('guest', [
+    const isPublic = this.reflector.getAllAndOverride<boolean>(ALLOW_GUEST, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -37,42 +46,42 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // token对比
     const request = context.switchToHttp().getRequest();
     const authorization = request['headers'].authorization || void 0;
-    console.log('authorization', authorization);
-
     let tokenNotTimeOut = true;
     if (authorization) {
       const token = authorization.split(' ')[1]; // authorization: Bearer xxx
       try {
-        const payload: any = this.jwtService.decode(token);
-        console.log('payload', payload);
-        // const key = `${payload.id}`;
-        // const redis_token = await RedisInstance.getRedis(
-        //   'jwt-auth.guard.canActivate',
-        //   0,
-        //   key,
-        // );
-        // if (!redis_token || redis_token !== token) {
-        //   throw new UnauthorizedException('您的登录信息已过期，请重新登录');
-        // }
+        const prefix = secretDecrypt(token)?.substr(0, 10);
+        const key = secretDecrypt(token)?.substr(10);
+        const redis_token: any = await this.redisService.getRedis(
+          'jwt-auth.guard.canActivate',
+          0,
+          `access_token::${key}`,
+        );
+        const decodePrefix = redis_token?.substr(0, 10);
+        const decodeToken = redis_token?.substr(10);
+        const payload: any = this.jwtService.decode(decodeToken);
+
+        if (!decodePrefix || !prefix || decodePrefix !== prefix || !payload) {
+          throw new UnauthorizedException('您的登录信息已过期，请重新登录');
+        }
+        // return payload;
       } catch (err) {
         tokenNotTimeOut = false;
         throw new UnauthorizedException(err.message || '请重新登录');
       }
     }
+    console.log('context', context);
+
     return tokenNotTimeOut && (super.canActivate(context) as boolean);
   }
 
   getRequest(context: ExecutionContext) {
-    console.log('走这里没有1');
-
     const ctx = context.switchToHttp();
     const request = ctx.getRequest();
     return request;
   }
 
-  handleRequest<User>(err, user: User): User {
-    console.log('走这里没有2');
-
+  handleRequest<User>(err: any, user: User): User {
     if (err || !user) {
       throw new UnauthorizedException('身份验证失败');
     }
