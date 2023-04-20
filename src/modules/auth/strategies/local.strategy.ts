@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-04-13 16:48:21
- * @LastEditTime: 2023-04-18 16:04:43
+ * @LastEditTime: 2023-04-18 22:59:25
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\strategies\local.strategy.ts
  */
@@ -18,6 +18,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(username: string, password: string): Promise<any> {
+    console.log('username', username);
+    console.log('password', password);
+
     const user = await this.authService.validateUser(username, password);
     if (!user) {
       throw new BadRequestException('密码错误');

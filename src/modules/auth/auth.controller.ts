@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-18 16:24:19
+ * @LastEditTime: 2023-04-19 01:27:08
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.controller.ts
  */
@@ -35,7 +35,7 @@ export class AuthController {
   @ApiOperation({ summary: '刷新token' })
   @UseGuards(JwtAuthGuard)
   @Post('refreshToken')
-  async refreshToken(@Body() body: any) {
-    return this.authService.refreshToken(body);
+  async refreshToken(@Req() req: any, @Body() body: any) {
+    return this.authService.refreshToken(req.user, body);
   }
 }

@@ -2,18 +2,21 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-28 19:11:11
- * @LastEditTime: 2023-04-18 16:32:34
+ * @LastEditTime: 2023-04-19 21:18:15
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\auth.service.ts
  */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { jwtConstants } from './constants';
 import { RedisService } from '@/common/db/redis/redis.service';
-import { secretEncrypt } from '@/common/utils/aes-secret';
+import { secretDecrypt, secretEncrypt } from '@/common/utils/aes-secret';
 import { getRandomString } from '@/common/utils/utils';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -48,14 +51,12 @@ export class AuthService {
             expiresIn: '4h',
           }
         : { secret: jwtConstants.secret, expiresIn: '7d' };
-    console.log('tokenType', tokenType);
-
     return this.jwtService.sign(user, tokenType);
   }
 
   async login(user: any) {
-    const accessToken = this.createToken(user.id);
-    const refreshToken = this.createToken(user.id, 'refresh');
+    const accessToken = this.createToken(user);
+    const refreshToken = this.createToken(user, 'refresh');
     const accessStr = getRandomString(10);
     const refreshStr = getRandomString(10);
 
@@ -86,8 +87,25 @@ export class AuthService {
   }
 
   // 刷新token
-  async refreshToken(option: any) {
-    console.log('option', option);
-    return option;
+  async refreshToken(user: any, option: any) {
+    const token = option.refresh_token;
+    const prefix = secretDecrypt(token)?.substr(0, 10);
+    const key = secretDecrypt(token)?.substr(10);
+    const redis_token: any = await this.redisService.getRedis(
+      'jwt-auth.guard.canActivate',
+      1,
+      `refresh_token::${key}`,
+    );
+
+    const decodePrefix = redis_token?.substr(0, 10);
+    const decodeToken = redis_token?.substr(10);
+    const payload: any = this.jwtService.decode(decodeToken);
+    if (!decodePrefix || !prefix || decodePrefix !== prefix || !payload) {
+      throw new UnauthorizedException('无效的token');
+    }
+    const { iat, exp, ...userData } = payload;
+    const refreshToken = await this.login(userData);
+
+    return refreshToken;
   }
 }

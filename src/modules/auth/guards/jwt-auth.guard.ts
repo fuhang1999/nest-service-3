@@ -2,7 +2,7 @@
  * @Description:
  * @Author: FuHang
  * @Date: 2023-03-31 01:11:57
- * @LastEditTime: 2023-04-18 15:34:14
+ * @LastEditTime: 2023-04-18 23:15:53
  * @LastEditors: Please set LastEditors
  * @FilePath: \nest-service\src\modules\auth\guards\jwt-auth.guard.ts
  */
